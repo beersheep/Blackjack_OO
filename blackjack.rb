@@ -70,6 +70,18 @@ class Game
     @current_caller = @player
   end
 
+
+  def play
+    setup_game
+    display_table_info
+    player_turn
+    change_caller
+    dealer_turn
+  end
+
+
+  private
+
   def setup_game
     4.times do 
       @deck.shuffle!
@@ -81,36 +93,64 @@ class Game
     end
   end
 
-  def hit_or_stand
-    puts "Would you like to hit?(Y/N)"
+  def display_table_info
+    puts "Dealer has a #{@dealer.hand[1]}"
+    puts "================================"
+    puts "You have #{@player.hand[0]} and #{@player.hand[1]}, total of #{@player.total}"
+  end
+
+  def player_turn
+    
     loop do 
+      if @player.blackjack?
+        puts "Blackjack! You win!"
+        play_again?
+      end
+      puts "Would you like to hit?(Y/N)"
       if gets.chomp.downcase == "y"
         deal_a_card
         puts "You get a #{@player.hand.last}, total of #{@player.total}"
-        break if game_over?
+        if @player.busted?
+          puts "You are busted!"
+          play_again?
+        end
       else
         break
       end
     end
-
   end
-
-
-
-  def play
-    setup_game
-    display_table_info
-    hit_or_stand
-  end
-
-
-  private
 
   def change_caller
     if @current_caller == @player
       @current_caller = @dealer
     else 
       @current_caller = @player
+    end
+  end
+
+  def dealer_turn
+    system "clear"
+    puts "Dealer have #{@dealer.hand[0]} and #{@dealer.hand[1]}, total of #{@dealer.total}"
+
+    # Dealer Logic
+    loop do 
+      if @dealer.blackjack?
+        puts "Dealer hits blackjack! You lose!"
+        play_again? 
+      end
+      if @dealer.total < 17
+        sleep 0.5
+        puts "=> Dealer chooses to hit."
+        deal_a_card
+        puts "Dealer gets a #{@dealer.hand.last}, total of #{@dealer.total}"
+        if @dealer.busted?
+          puts "Dealer busted! You win!"
+          play_again?
+        end
+      else 
+        puts "=> Dealer chooses to stand."
+        break
+      end
     end
   end
 
@@ -122,23 +162,26 @@ class Game
     end
   end
 
-  def display_table_info
-    puts "Dealer has a #{@dealer.hand[1]}"
-    puts "================================"
-    puts "You have #{@player.hand[0]} and #{@player.hand[1]}, total of #{@player.total}"
-  end
-
-  def game_over?
-    if @player.busted?
-      puts "You are busted!"
-      true
-    elsif @player.blackjack?
-      puts "Blackjack! You win!"
-      true
-    else
-      false
+  def play_again?
+    loop do 
+      puts "Would you like to play again?"
+      if gets.chomp.downcase == "y"
+        replay 
+      else 
+        puts "Thank you for playing!"
+        exit
+      end
     end
   end
+
+  def replay 
+    system "clear"
+    @deck = Deck.new
+    @player.hand.clear
+    @dealer.hand.clear
+    play
+  end
+
 
 end
 
