@@ -1,5 +1,3 @@
-require "pry"
-
 class Deck
   def initialize
     value = %w(2 3 4 5 6 7 8 9 10 J Q K A)
@@ -15,7 +13,6 @@ class Deck
     @deck.pop
   end
 end
-
 
 class Player
   attr_accessor :hand
@@ -54,22 +51,15 @@ class Player
 
 end
 
-class Human < Player
-end 
-
-class Dealer < Player
-end
-
 class Game
   BLACKJACK = 21
 
   def initialize
     @deck = Deck.new
     @player = Player.new("Roy")
-    @dealer = Dealer.new("Dealer")
+    @dealer = Player.new("Dealer")
     @current_caller = @player
   end
-
 
   def play
     setup_game
@@ -81,7 +71,7 @@ class Game
     show_hand
     check_winner
   end
-  
+
   private
 
   def setup_game
@@ -102,7 +92,6 @@ class Game
   end
 
   def player_turn
-    
     loop do 
       if @player.blackjack?
         puts "Blackjack! You win!"
@@ -134,7 +123,6 @@ class Game
     system "clear"
     puts "Dealer have #{@dealer.hand[0]} and #{@dealer.hand[1]}, total of #{@dealer.total}"
 
-    # Dealer Logic
     loop do 
       if @dealer.blackjack?
         puts "Dealer hits blackjack! You lose!"
@@ -161,9 +149,7 @@ class Game
     puts "Player's hand are"
     @player.hand.each {|card| puts "#{card}"}
     puts "the total of #{@player.total}"
-
     puts "=================================="
-
     puts "Dealer's hand are"
     @dealer.hand.each {|card| puts "#{card}"}
     puts "the total of #{@dealer.total}"
@@ -208,10 +194,7 @@ class Game
     @current_caller = @player
     play
   end
-
-
+  
 end
 
 Game.new.play
-
-# binding.pry
