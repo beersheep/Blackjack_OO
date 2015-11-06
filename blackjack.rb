@@ -22,10 +22,11 @@ class Player
   def initialize(name)
     @name = name
     @hand = []
-    @total = 0 
+    
   end
 
-  def calculate_total
+  def total
+    @total = 0 
     @hand.each do |card|
       if card[1] == "A"
         @total += 11
@@ -35,12 +36,20 @@ class Player
         @total += card[1].to_i
       end  
     end
-    if @total > 21 
+    if @total > Game::BLACKJACK
       @hand.select {|card| card[1] == "A"}.size.times do 
         @total -= 10
       end
     end
     @total
+  end
+
+  def blackjack?
+    @total == Game::BLACKJACK ? true : false
+  end
+
+  def busted?
+    @total > Game::BLACKJACK ? true :false
   end
 
 end
@@ -52,6 +61,7 @@ class Dealer < Player
 end
 
 class Game
+  BLACKJACK = 21
 
   def initialize
     @deck = Deck.new
@@ -71,15 +81,26 @@ class Game
     end
   end
 
-  def display_table_info
-    puts "Dealer has a #{@dealer.hand[1]}"
-    puts "================================"
-    puts "You have #{@player.hand[0]} and #{@player.hand[1]}, total of #{@player.calculate_total}"
+  def hit_or_stand
+    puts "Would you like to hit?(Y/N)"
+    loop do 
+      if gets.chomp.downcase == "y"
+        deal_a_card
+        puts "You get a #{@player.hand.last}, total of #{@player.total}"
+        break if game_over?
+      else
+        break
+      end
+    end
+
   end
+
+
 
   def play
     setup_game
     display_table_info
+    hit_or_stand
   end
 
 
@@ -98,6 +119,24 @@ class Game
       @player.hand << @deck.deal
     else 
       @dealer.hand << @deck.deal
+    end
+  end
+
+  def display_table_info
+    puts "Dealer has a #{@dealer.hand[1]}"
+    puts "================================"
+    puts "You have #{@player.hand[0]} and #{@player.hand[1]}, total of #{@player.total}"
+  end
+
+  def game_over?
+    if @player.busted?
+      puts "You are busted!"
+      true
+    elsif @player.blackjack?
+      puts "Blackjack! You win!"
+      true
+    else
+      false
     end
   end
 
