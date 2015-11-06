@@ -77,9 +77,11 @@ class Game
     player_turn
     change_caller
     dealer_turn
+    sleep 1.0
+    show_hand
+    check_winner
   end
-
-
+  
   private
 
   def setup_game
@@ -154,6 +156,30 @@ class Game
     end
   end
 
+  def show_hand
+    system "clear"
+    puts "Player's hand are"
+    @player.hand.each {|card| puts "#{card}"}
+    puts "the total of #{@player.total}"
+
+    puts "=================================="
+
+    puts "Dealer's hand are"
+    @dealer.hand.each {|card| puts "#{card}"}
+    puts "the total of #{@dealer.total}"
+  end
+
+  def check_winner
+    if @player.total > @dealer.total
+      puts "You win!"
+    elsif @dealer.total > @player.total
+      puts "Dealer wins!"
+    else 
+      puts "It's a push!"
+    end
+    play_again?
+  end
+
   def deal_a_card
     if @current_caller == @player
       @player.hand << @deck.deal
@@ -164,7 +190,7 @@ class Game
 
   def play_again?
     loop do 
-      puts "Would you like to play again?"
+      puts "Would you like to play again?(Y/N)"
       if gets.chomp.downcase == "y"
         replay 
       else 
@@ -179,6 +205,7 @@ class Game
     @deck = Deck.new
     @player.hand.clear
     @dealer.hand.clear
+    @current_caller = @player
     play
   end
 
