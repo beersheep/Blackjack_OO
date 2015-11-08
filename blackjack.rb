@@ -79,8 +79,8 @@ class Game
       @deck.shuffle!
     end
     loop do 
-      deal_a_card
-      change_caller
+      deal_a_card(@player)
+      deal_a_card(@dealer)
       break if @dealer.hand.size == 2
     end
   end
@@ -99,7 +99,7 @@ class Game
       end
       puts "Would you like to hit?(Y/N)"
       if gets.chomp.downcase == "y"
-        deal_a_card
+        deal_a_card(@player)
         puts "You get a #{@player.hand.last}, total of #{@player.total}"
         if @player.busted?
           puts "You are busted!"
@@ -131,7 +131,7 @@ class Game
       if @dealer.total < 17
         sleep 0.5
         puts "=> Dealer chooses to hit."
-        deal_a_card
+        deal_a_card(@dealer)
         puts "Dealer gets a #{@dealer.hand.last}, total of #{@dealer.total}"
         if @dealer.busted?
           puts "Dealer busted! You win!"
@@ -166,12 +166,8 @@ class Game
     play_again?
   end
 
-  def deal_a_card
-    if @current_caller == @player
-      @player.hand << @deck.deal
-    else 
-      @dealer.hand << @deck.deal
-    end
+  def deal_a_card(player)
+    player.hand << @deck.deal
   end
 
   def play_again?
