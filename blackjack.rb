@@ -15,7 +15,7 @@ class Deck
 end
 
 class Player
-  attr_accessor :hand
+  attr_accessor :hand, :name
   def initialize(name)
     @name = name
     @hand = []
@@ -57,7 +57,7 @@ class Game
 
   def initialize
     @deck = Deck.new
-    @player = Player.new("Roy")
+    @player = Player.new(get_name)
     @dealer = Player.new("Dealer")
   end
 
@@ -71,10 +71,17 @@ class Game
     check_winner
   end
 
-  private
+  def get_name
+    puts "What's your name?"
+    name = gets.chomp
+    puts "Welcome! #{name}"
+
+    puts ".....setting up the table....."
+    sleep 0.5
+  end
 
   def setup_game
-    4.times { @deck.shuffle! }
+    4.times { deck.shuffle! }
     loop do 
       deal_a_card(player)
       deal_a_card(dealer)
@@ -85,7 +92,7 @@ class Game
   def display_table_info
     puts "Dealer has a #{dealer.hand[1]}"
     puts "================================"
-    puts "You have #{player.hand[0]} and #{player.hand[1]}, total of #{@player.total}"
+    puts "You have #{player.hand[0]} and #{player.hand[1]}, total of #{player.total}"
   end
 
   def player_turn
@@ -113,16 +120,16 @@ class Game
     puts "Dealer have #{dealer.hand[0]} and #{dealer.hand[1]}, total of #{dealer.total}"
 
     loop do 
-      if @dealer.blackjack?
+      if dealer.blackjack?
         puts "Dealer hits blackjack! You lose!"
         play_again? 
       end
-      if @dealer.total < 17
+      if dealer.total < 17
         sleep 0.5
         puts "=> Dealer chooses to hit."
         deal_a_card(@dealer)
         puts "Dealer gets a #{dealer.hand.last}, total of #{dealer.total}"
-        if @dealer.busted?
+        if dealer.busted?
           puts "Dealer busted! You win!"
           play_again?
         end
