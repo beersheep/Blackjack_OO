@@ -58,14 +58,12 @@ class Game
     @deck = Deck.new
     @player = Player.new("Roy")
     @dealer = Player.new("Dealer")
-    @current_caller = @player
   end
 
   def play
     setup_game
     display_table_info
     player_turn
-    change_caller
     dealer_turn
     sleep 1.0
     show_hand
@@ -108,14 +106,6 @@ class Game
       else
         break
       end
-    end
-  end
-
-  def change_caller
-    if @current_caller == @player
-      @current_caller = @dealer
-    else 
-      @current_caller = @player
     end
   end
 
@@ -187,7 +177,6 @@ class Game
     @deck = Deck.new
     @player.hand.clear
     @dealer.hand.clear
-    @current_caller = @player
     play
   end
   
