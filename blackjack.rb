@@ -22,31 +22,31 @@ class Player
   end
 
   def total
-    @total = 0 
-    @hand.each do |card|
+    total = 0 
+    hand.each do |card|
       if card[1] == "A"
-        @total += 11
+        total += 11
       elsif card[1].to_i == 0
-        @total += 10
+        total += 10
       else
-        @total += card[1].to_i
+        total += card[1].to_i
       end  
     end
     
-    if @total > Game::BLACKJACK
-      @hand.select {|card| card[1] == "A"}.size.times do 
-        @total -= 10
+    hand.select {|card| card[1] == "A"}.size.times do 
+      if total > Game::BLACKJACK
+        total -= 10
       end
     end
-    @total
+    total
   end
 
   def blackjack?
-    @total == Game::BLACKJACK ? true : false
+    total == Game::BLACKJACK ? true : false
   end
 
   def busted?
-    @total > Game::BLACKJACK ? true :false
+    total > Game::BLACKJACK ? true :false
   end
 
 end
