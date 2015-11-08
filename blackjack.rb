@@ -15,11 +15,10 @@ class Deck
 end
 
 class Player
-  attr_accessor :hand, :name
+  attr_accessor :hand
   def initialize(name)
     @name = name
     @hand = []
-    
   end
 
   def total
@@ -33,6 +32,7 @@ class Player
         @total += card[1].to_i
       end  
     end
+    
     if @total > Game::BLACKJACK
       @hand.select {|card| card[1] == "A"}.size.times do 
         @total -= 10
@@ -127,7 +127,7 @@ class Game
       if dealer.total < 17
         sleep 0.5
         puts "=> Dealer chooses to hit."
-        deal_a_card(@dealer)
+        deal_a_card(dealer)
         puts "Dealer gets a #{dealer.hand.last}, total of #{dealer.total}"
         if dealer.busted?
           puts "Dealer busted! You win!"
